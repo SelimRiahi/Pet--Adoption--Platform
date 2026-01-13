@@ -46,7 +46,7 @@ export class AdoptionRequestsService {
     const request = new this.requestModel({
       userId: new Types.ObjectId(userId),
       animalId: new Types.ObjectId(animalId),
-      message,
+      message: message || '', // Convert undefined/null to empty string
       compatibilityScore: compatibilityScore,
       status: AdoptionStatus.PENDING,
     });
@@ -61,7 +61,18 @@ export class AdoptionRequestsService {
       'shelter'
     );
 
-    return request.save();
+    const savedRequest = await request.save();
+    
+    // Convert null fields to empty strings before returning
+    const result = savedRequest.toObject();
+    if (result.message === null || result.message === undefined) {
+      result.message = '';
+    }
+    if (result.shelterNotes === null || result.shelterNotes === undefined) {
+      result.shelterNotes = '';
+    }
+    
+    return result as AdoptionRequest;
   }
 
   async findAll(): Promise<AdoptionRequest[]> {
@@ -76,24 +87,48 @@ export class AdoptionRequestsService {
   }
 
   async findByUser(userId: string): Promise<AdoptionRequest[]> {
-    return this.requestModel.find({ userId: new Types.ObjectId(userId) })
+    const requests = await this.requestModel.find({ userId: new Types.ObjectId(userId) })
       .populate({
         path: 'animalId',
         populate: { path: 'shelterId', select: 'name email' }
       })
       .sort({ createdAt: -1 })
       .exec();
+    
+    // Convert null message fields to empty strings to avoid JSON parsing issues
+    return requests.map(req => {
+      const obj = req.toObject();
+      if (obj.message === null) {
+        obj.message = '';
+      }
+      if (obj.shelterNotes === null) {
+        obj.shelterNotes = '';
+      }
+      return obj as AdoptionRequest;
+    });
   }
 
   async findByShelter(shelterId: string): Promise<AdoptionRequest[]> {
     const animals = await this.animalsService.findByShelter(shelterId);
     const animalIds = animals.map(a => a._id);
     
-    return this.requestModel.find({ animalId: { $in: animalIds } })
+    const requests = await this.requestModel.find({ animalId: { $in: animalIds } })
       .populate('userId', 'name email')
       .populate('animalId')
       .sort({ createdAt: -1 })
       .exec();
+    
+    // Convert null message fields to empty strings to avoid JSON parsing issues
+    return requests.map(req => {
+      const obj = req.toObject();
+      if (obj.message === null) {
+        obj.message = '';
+      }
+      if (obj.shelterNotes === null) {
+        obj.shelterNotes = '';
+      }
+      return obj as AdoptionRequest;
+    });
   }
 
   async findOne(id: string): Promise<AdoptionRequest> {
@@ -109,7 +144,16 @@ export class AdoptionRequestsService {
       throw new NotFoundException(`Adoption request with ID ${id} not found`);
     }
 
-    return request;
+    // Convert null fields to empty strings
+    const obj = request.toObject();
+    if (obj.message === null || obj.message === undefined) {
+      obj.message = '';
+    }
+    if (obj.shelterNotes === null || obj.shelterNotes === undefined) {
+      obj.shelterNotes = '';
+    }
+    
+    return obj as AdoptionRequest;
   }
 
   async updateStatus(
@@ -137,7 +181,10 @@ export class AdoptionRequestsService {
       throw new ForbiddenException('You do not have permission to update this request');
     }
 
-    await this.requestModel.findByIdAndUpdate(id, { status, shelterNotes }).exec();
+    await this.requestModel.findByIdAndUpdate(id, { 
+      status, 
+      shelterNotes: shelterNotes || '' 
+    }).exec();
 
     // Extract animalId from populated object
     const animalId = request.animalId._id?.toString() || request.animalId.toString();

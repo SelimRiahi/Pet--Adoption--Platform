@@ -1,0 +1,27 @@
+# Android Studio Quick Start Guide
+
+## After Android Studio is installed:
+
+1. Click "Open" on the welcome screen
+   OR
+   File → Open (if Android Studio is already open)
+
+2. Navigate to:
+   C:\Users\Selim\OneDrive\Bureau\pro\pet-adoption-platform\android-app
+
+3. Click "OK"
+
+4. Wait for Gradle Sync (2-5 minutes first time)
+   - You'll see "Gradle sync" progress at the bottom
+   - Wait until it says "Gradle sync finished"
+
+5. If prompted to update Gradle plugin, click "Update"
+
+## Troubleshooting Gradle Sync:
+
+If you see errors:
+- Click "File → Sync Project with Gradle Files"
+- Wait for sync to complete
+- Errors about missing SDK? Go to Tools → SDK Manager → Install missing components
+
+## Next: Run the app (see instructions below)

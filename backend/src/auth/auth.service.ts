@@ -28,7 +28,7 @@ export class AuthService {
     return {
       access_token: token,
       user: {
-        id: user._id.toString(),
+        _id: user._id.toString(),
         email: user.email,
         name: user.name,
         role: user.role,

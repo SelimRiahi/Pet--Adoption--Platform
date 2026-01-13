@@ -12,8 +12,8 @@ import { LocalStrategy } from './local.strategy';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'super-secret-key',
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN || '7d' },
+      secret: 'your-super-secret-jwt-key-change-this-in-production',
+      signOptions: { expiresIn: '7d' },
     }),
   ],
   controllers: [AuthController],

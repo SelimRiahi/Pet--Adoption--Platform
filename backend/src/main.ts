@@ -16,6 +16,16 @@ async function bootstrap() {
     whitelist: true,
     transform: true,
     forbidNonWhitelisted: true,
+    exceptionFactory: (errors) => {
+      console.log('❌ Validation failed:', JSON.stringify(errors, null, 2));
+      const messages = errors.map(error => ({
+        field: error.property,
+        constraints: error.constraints,
+        value: error.value
+      }));
+      console.log('❌ Validation errors:', JSON.stringify(messages, null, 2));
+      return new ValidationPipe().createExceptionFactory()(errors);
+    },
   }));
   
   const port = process.env.PORT || 3000;

@@ -7,25 +7,24 @@ import { User } from './user.schema';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
     console.log('🔍 Profile endpoint hit, user:', req.user);
-    // Mock user for testing when JWT fails
-    if (!req.user) {
-      const mockUser = await this.usersService.findByEmail('john@example.com');
-      return mockUser;
-    }
-    return this.usersService.findOne(req.user.userId);
+    const user = await this.usersService.findOne(req.user.userId);
+    // Ensure boolean fields are never null
+    if (user.hasChildren === null || user.hasChildren === undefined) user.hasChildren = false;
+    if (user.hasOtherPets === null || user.hasOtherPets === undefined) user.hasOtherPets = false;
+    return user;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('profile')
   async updateProfile(@Request() req, @Body() updateData: Partial<User>) {
     console.log('✏️ Update profile endpoint, user:', req.user, 'data:', updateData);
-    // Mock user for testing
-    if (!req.user) {
-      const mockUser = await this.usersService.findByEmail('john@example.com');
-      return this.usersService.update(mockUser._id.toString(), updateData);
-    }
+    // Handle null boolean values - convert to false
+    if (updateData.hasChildren === null) updateData.hasChildren = false;
+    if (updateData.hasOtherPets === null) updateData.hasOtherPets = false;
     return this.usersService.update(req.user.userId, updateData);
   }
 

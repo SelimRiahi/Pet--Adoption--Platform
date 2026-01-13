@@ -56,8 +56,19 @@ export class Animal extends Document {
   @Prop({ type: String, enum: AnimalStatus, default: AnimalStatus.AVAILABLE })
   status: AnimalStatus;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   shelterId: Types.ObjectId;
 }
 
 export const AnimalSchema = SchemaFactory.createForClass(Animal);
+
+// Convert ObjectId to string when serializing to JSON
+AnimalSchema.set('toJSON', {
+  virtuals: true,
+  transform: (doc: any, ret: any) => {
+    if (ret.shelterId && typeof ret.shelterId === 'object') {
+      ret.shelterId = ret.shelterId.toString();
+    }
+    return ret;
+  },
+});

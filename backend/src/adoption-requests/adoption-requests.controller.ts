@@ -38,29 +38,20 @@ export class AdoptionRequestsController {
     private readonly usersService: UsersService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createDto: CreateAdoptionRequestDto, @Request() req) {
-    console.log('📤 Create adoption request, user:', req.user, 'body userId:', createDto.userId);
-    // Use userId from body (sent by frontend) or fallback to mock user
-    let userId = createDto.userId || req.user?.userId;
-    if (!userId) {
-      const mockUser = await this.usersService.findByEmail('john@example.com');
-      userId = mockUser._id.toString();
-    }
+    console.log('📤 Create adoption request, user:', req.user);
+    const userId = req.user.userId;
     return this.requestsService.create(userId, createDto.animalId, createDto.message);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll(@Request() req, @Query('userId') queryUserId?: string) {
-    console.log('🔍 Adoption requests endpoint, user:', req.user, 'query userId:', queryUserId);
-    // Use userId from query param (sent by frontend), JWT, or mock user
-    let userId = queryUserId || req.user?.userId;
-    let userRole = req.user?.role;
-    if (!userId) {
-      const mockUser = await this.usersService.findByEmail('john@example.com');
-      userId = mockUser._id.toString();
-      userRole = mockUser.role;
-    }
+  async findAll(@Request() req) {
+    console.log('🔍 Adoption requests endpoint, user:', req.user);
+    const userId = req.user.userId;
+    const userRole = req.user.role;
     // If user is shelter, show requests for their animals
     if (userRole === 'shelter') {
       return this.requestsService.findByShelter(userId);
@@ -69,15 +60,11 @@ export class AdoptionRequestsController {
     return this.requestsService.findByUser(userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('my-requests')
   async findMyRequests(@Request() req) {
     console.log('🔍 My requests endpoint, user:', req.user);
-    // Mock user for testing - use john's account
-    let userId = req.user?.userId;
-    if (!userId) {
-      const mockUser = await this.usersService.findByEmail('john@example.com');
-      userId = mockUser._id.toString();
-    }
+    const userId = req.user.userId;
     return this.requestsService.findByUser(userId);
   }
 
@@ -91,6 +78,7 @@ export class AdoptionRequestsController {
     return this.requestsService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id/status')
   async updateStatus(
     @Param('id') id: string,
@@ -100,16 +88,10 @@ export class AdoptionRequestsController {
     console.log('📝 Update request status');
     console.log('  - user:', req.user);
     console.log('  - body:', updateDto);
-    console.log('  - body shelterId:', updateDto.shelterId);
     console.log('  - body status:', updateDto.status);
     
-    // Use shelterId from body (sent by frontend) or fallback
-    let shelterId = updateDto.shelterId || req.user?.userId;
-    if (!shelterId) {
-      const mockShelter = await this.usersService.findByEmail('happypaws@shelter.com');
-      shelterId = mockShelter._id.toString();
-    }
-    const role = req.user?.role || 'shelter';
+    const shelterId = req.user.userId;
+    const role = req.user.role;
     
     console.log('  - resolved shelterId:', shelterId);
     console.log('  - resolved role:', role);
@@ -123,6 +105,7 @@ export class AdoptionRequestsController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string, @Request() req) {
     return this.requestsService.remove(id, req.user.userId);

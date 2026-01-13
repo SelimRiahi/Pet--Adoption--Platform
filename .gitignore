@@ -13,54 +13,31 @@ backend/yarn-debug.log*
 backend/yarn-error.log*
 backend/.pnpm-debug.log*
 
-# ============ Flutter / Dart ============
-mobile-app/.dart_tool/
-mobile-app/.flutter-plugins
-mobile-app/.flutter-plugins-dependencies
-mobile-app/.packages
-mobile-app/.pub-cache/
-mobile-app/.pub/
-mobile-app/build/
-mobile-app/.flutter-plugins-dependencies
+# ============ Android Kotlin App ============
+android-app/.gradle/
+android-app/.idea/
+android-app/build/
+android-app/local.properties
+android-app/*.iml
+android-app/.DS_Store
+android-app/captures/
+android-app/.externalNativeBuild/
+android-app/.cxx/
+android-app/app/build/
+android-app/app/release/
+android-app/app/debug/
+android-app/*.apk
+android-app/*.aab
 
-# Flutter/Dart generated files
-mobile-app/**/*.g.dart
-mobile-app/**/*.freezed.dart
-mobile-app/**/*.mocks.dart
-
-# Android
-mobile-app/android/**/gradle-wrapper.jar
-mobile-app/android/.gradle
-mobile-app/android/captures/
-mobile-app/android/gradlew
-mobile-app/android/gradlew.bat
-mobile-app/android/local.properties
-mobile-app/android/**/GeneratedPluginRegistrant.java
-mobile-app/android/key.properties
-mobile-app/android/.cxx/
-mobile-app/android/app/debug
-mobile-app/android/app/profile
-mobile-app/android/app/release
-
-# iOS
-mobile-app/ios/**/Generated.xcconfig
-mobile-app/ios/**/.generated/
-mobile-app/ios/Flutter/flutter_export_environment.sh
-mobile-app/ios/Flutter/App.framework
-mobile-app/ios/Flutter/Flutter.framework
-mobile-app/ios/Flutter/Flutter.podspec
-mobile-app/ios/Pods/
-mobile-app/ios/.symlinks/
-mobile-app/ios/**/profile
-mobile-app/ios/**/DerivedData/
-mobile-app/ios/Runner.xcworkspace/xcshareddata/
-
-# Web
-mobile-app/web/.flutter_js/
-
-# macOS
-mobile-app/macos/Flutter/GeneratedPluginRegistrant.swift
-mobile-app/macos/.symlinks/
+# ============ iOS Swift App ============
+ios-app/Pods/
+ios-app/*.xcworkspace/xcuserdata/
+ios-app/*.xcodeproj/xcuserdata/
+ios-app/*.xcodeproj/project.xcworkspace/xcuserdata/
+ios-app/DerivedData/
+ios-app/build/
+ios-app/.swiftpm/
+ios-app/*.ipa
 
 # ============ Python / AI Service ============
 ai-service/__pycache__/
@@ -76,19 +53,10 @@ ai-service/.venv
 ai-service/pip-log.txt
 ai-service/pip-delete-this-directory.txt
 
-# AI Models and Training Data
-# OPTION A (Current): Exclude models - users must train locally (~2 seconds)
-# This keeps repo clean but requires one extra step
+# AI Models (excluded - train locally)
 ai-service/*.pkl
 ai-service/*.h5
 ai-service/*.pt
-ai-service/training_data.csv
-ai-service/feature_names.json
-ai-service/model_metrics.json
-
-# OPTION B: Include models - ready to use immediately
-# To use this, comment out the lines above with #
-# Pros: Zero setup, instant use | Cons: Adds ~550KB to repo
 
 # Jupyter Notebook
 ai-service/.ipynb_checkpoints
@@ -107,75 +75,23 @@ db/
 !.vscode/extensions.json
 .history/
 
-# IntelliJ IDEA
+# IntelliJ IDEA / Android Studio
 .idea/
 *.iws
 *.iml
 *.ipr
-
-# Android Studio
 *.log
 .gradle/
 local.properties
 
 # ============ OS Files ============
-# macOS
 .DS_Store
-.AppleDouble
-.LSOverride
-
-# Windows
 Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
 *.stackdump
-[Dd]esktop.ini
-$RECYCLE.BIN/
-*.lnk
-
-# Linux
-*~
-.fuse_hidden*
-.directory
-.Trash-*
-.nfs*
 
 # ============ Logs ============
 *.log
 logs/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# ============ Temporary Files ============
-*.tmp
-*.temp
-*.swp
-*.swo
-*~
-.cache/
-
-# ============ Build Outputs ============
-dist/
-build/
-out/
-*.exe
-*.dll
-*.so
-*.dylib
-
-# ============ Testing ============
-coverage/
-.nyc_output/
-*.lcov
-.pytest_cache/
-
-# ============ Documentation (Optional) ============
-# Uncomment if you don't want to commit temporary docs
-# docs/_build/
-# site/
 
 # ============ Secrets & Credentials ============
 *.pem
@@ -186,8 +102,3 @@ coverage/
 .env.*.local
 secrets.json
 credentials.json
-
-# ============ Misc ============
-*.bak
-*.backup
-*.old

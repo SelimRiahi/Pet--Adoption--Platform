@@ -21,6 +21,10 @@ class CreateAnimalDto {
   @Max(30)
   age: number;
 
+  @IsOptional()
+  @IsString()
+  gender?: string;
+
   @IsEnum(AnimalSize)
   size: AnimalSize;
 
@@ -43,6 +47,14 @@ class CreateAnimalDto {
   imageUrl?: string;
 
   @IsOptional()
+  @IsBoolean()
+  specialNeeds?: boolean;
+
+  @IsOptional()
+  @IsString()
+  spaceRequirement?: string;
+
+  @IsOptional()
   @IsString()
   shelterId?: string;
 }
@@ -55,32 +67,30 @@ export class AnimalsController {
     private readonly usersService: UsersService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createAnimalDto: CreateAnimalDto, @Request() req) {
     console.log('🐾 Create animal endpoint hit');
     console.log('  - req.user:', req.user);
-    console.log('  - body:', createAnimalDto);
-    console.log('  - body shelterId:', createAnimalDto.shelterId);
+    console.log('  - body RAW:', JSON.stringify(createAnimalDto, null, 2));
+    console.log('  - body species type:', typeof createAnimalDto.species, createAnimalDto.species);
+    console.log('  - body size type:', typeof createAnimalDto.size, createAnimalDto.size);
+    console.log('  - body energyLevel type:', typeof createAnimalDto.energyLevel, createAnimalDto.energyLevel);
     
-    // Use shelterId from body (sent by frontend) or fallback to mock shelter
-    let shelterId = createAnimalDto.shelterId || req.user?.userId;
-    if (!shelterId) {
-      const mockShelter = await this.usersService.findByEmail('happypaws@shelter.com');
-      shelterId = mockShelter._id.toString();
-    }
-    
+    const shelterId = req.user.userId;
     console.log('  - resolved shelterId:', shelterId);
     
-    // Remove shelterId from DTO before passing to service
-    const { shelterId: _, ...animalData } = createAnimalDto;
-    console.log('  - animalData to create:', animalData);
+    // Remove shelterId, gender, specialNeeds, and spaceRequirement from DTO before passing to service
+    const { shelterId: _, gender: __, specialNeeds: ___, spaceRequirement: ____, ...animalData } = createAnimalDto;
+    console.log('  - animalData to create:', JSON.stringify(animalData, null, 2));
     
     try {
       const result = await this.animalsService.create(animalData, shelterId);
       console.log('✅ Animal created successfully');
       return result;
     } catch (error) {
-      console.error('❌ Error creating animal:', error);
+      console.error('❌ Error creating animal:', error.message);
+      console.error('❌ Error stack:', error.stack);
       throw error;
     }
   }
@@ -100,18 +110,16 @@ export class AnimalsController {
     return this.animalsService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id/compatibility')
-  async getCompatibility(@Param('id') id: string, @Request() req, @Query('userId') queryUserId?: string) {
+  async getCompatibility(@Param('id') id: string, @Request() req) {
     try {
-      console.log('🧬 Compatibility endpoint, user:', req.user, 'query userId:', queryUserId);
+      console.log('🧬 Compatibility endpoint, user:', req.user);
       const animal = await this.animalsService.findOne(id);
-      // Use userId from query param or fallback to mock user
-      let userId = queryUserId || req.user?.userId;
-      if (!userId) {
-        const mockUser = await this.usersService.findByEmail('john@example.com');
-        userId = mockUser._id.toString();
-      }
+      const userId = req.user.userId;
+      console.log('  - Calculating compatibility for userId:', userId, 'animalId:', id);
       const compatibility = await this.aiService.predictCompatibility(userId, animal);
+      console.log('  - Got compatibility score:', compatibility.compatibility_score);
       return compatibility;
     } catch (error) {
       console.error('⚠️ Compatibility check failed:', error.message);

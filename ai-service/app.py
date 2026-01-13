@@ -7,6 +7,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
 import numpy as np
+import pandas as pd
 import os
 
 app = Flask(__name__)
@@ -74,8 +75,8 @@ def predict():
         species_map = {'cat': 0, 'dog': 1, 'other': 2}
         size_map = {'small': 0, 'medium': 1, 'large': 2}
         
-        # Prepare features in correct order
-        features = np.array([[
+        # Prepare features with proper column names (same as training)
+        features = pd.DataFrame([[
             housing_map.get(user.get('housing_type', 'apartment'), 0),
             float(user.get('available_time', 5)),
             experience_map.get(user.get('experience', 'none'), 0),
@@ -87,11 +88,22 @@ def predict():
             float(animal.get('energy_level', 5)),
             int(animal.get('good_with_children', True)),
             int(animal.get('good_with_pets', True))
-        ]])
+        ]], columns=['housing_type', 'available_time', 'experience', 'has_children', 
+                     'has_other_pets', 'species', 'age', 'size', 'energy_level', 
+                     'good_with_children', 'good_with_pets'])
+        
+        print(f"\n🔍 Prediction Request:")
+        print(f"  User: housing={user.get('housing_type')}, time={user.get('available_time')}, exp={user.get('experience')}")
+        print(f"       children={user.get('has_children')}, pets={user.get('has_other_pets')}")
+        print(f"  Animal: {animal.get('species')}, age={animal.get('age')}, size={animal.get('size')}, energy={animal.get('energy_level')}")
+        print(f"          good_w_children={animal.get('good_with_children')}, good_w_pets={animal.get('good_with_pets')}")
+        print(f"  Features (numeric): {features.values[0].tolist()}")
         
         # Make prediction
         score = float(model.predict(features)[0])
         score = max(0, min(100, score))  # Ensure score is within 0-100
+        
+        print(f"  ➡️ Predicted score: {score:.2f}%")
         
         # Determine recommendation level
         if score >= 80:

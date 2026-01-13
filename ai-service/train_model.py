@@ -61,49 +61,101 @@ def generate_synthetic_data(n_samples=5000):
     for i in range(n_samples):
         score = 50  # Base score
         
-        # Housing compatibility
-        if df.loc[i, 'size'] == 2 and df.loc[i, 'housing_type'] >= 1:  # Large animal, house
+        # Housing compatibility - BIGGER IMPACT
+        if df.loc[i, 'size'] == 2:  # Large animal
+            if df.loc[i, 'housing_type'] == 2:  # Large house
+                score += 20
+            elif df.loc[i, 'housing_type'] == 1:  # Small house
+                score += 5
+            else:  # Apartment
+                score -= 25
+        elif df.loc[i, 'size'] == 1:  # Medium animal
+            if df.loc[i, 'housing_type'] >= 1:  # Any house
+                score += 10
+            else:  # Apartment
+                score -= 5
+        else:  # Small animal
+            score += 5  # Good for any housing
+        
+        # Time availability vs energy level - CRITICAL MATCH
+        energy = df.loc[i, 'energy_level']
+        time = df.loc[i, 'available_time']
+        
+        if energy > 7:  # High energy animal
+            if time >= 6:
+                score += 15
+            elif time >= 4:
+                score -= 5
+            else:
+                score -= 20
+        elif energy > 4:  # Medium energy
+            if time >= 4:
+                score += 10
+            else:
+                score -= 10
+        else:  # Low energy animal
+            if time < 4:
+                score += 10
+            else:
+                score += 5
+        
+        # Experience match - MORE VARIATION
+        exp = df.loc[i, 'experience']
+        species = df.loc[i, 'species']
+        
+        if exp == 2:  # Expert
             score += 15
-        elif df.loc[i, 'size'] == 2 and df.loc[i, 'housing_type'] == 0:  # Large animal, apartment
-            score -= 20
-        elif df.loc[i, 'size'] == 0 and df.loc[i, 'housing_type'] == 0:  # Small animal, apartment
-            score += 10
+        elif exp == 1:  # Some experience
+            if species == 1:  # Dog
+                score += 5
+            else:
+                score += 10
+        else:  # No experience
+            if species == 1 and energy > 6:  # High energy dog
+                score -= 20
+            elif species == 1:  # Any dog
+                score -= 10
+            else:  # Cat or other
+                score += 0
         
-        # Time availability vs energy level
-        time_energy_ratio = df.loc[i, 'available_time'] / (df.loc[i, 'energy_level'] + 1)
-        score += (time_energy_ratio - 0.5) * 20
-        
-        # Experience match
-        if df.loc[i, 'experience'] == 2:  # Expert
-            score += 10
-        elif df.loc[i, 'experience'] == 0 and df.loc[i, 'species'] == 1:  # No experience with dog
-            score -= 15
-        
-        # Children compatibility
+        # Children compatibility - STRICT
         if df.loc[i, 'has_children'] == 1:
             if df.loc[i, 'good_with_children'] == 1:
-                score += 20
+                score += 25
             else:
-                score -= 30
+                score -= 40  # Deal breaker
         
-        # Other pets compatibility
+        # Other pets compatibility - STRICT
         if df.loc[i, 'has_other_pets'] == 1:
             if df.loc[i, 'good_with_pets'] == 1:
-                score += 15
+                score += 20
             else:
-                score -= 25
+                score -= 35  # Deal breaker
         
-        # Age factor (older animals often easier for beginners)
-        if df.loc[i, 'age'] > 5 and df.loc[i, 'experience'] < 2:
-            score += 10
-        
-        # Species-specific adjustments
-        if df.loc[i, 'species'] == 0:  # Cats generally easier
+        # Age factor - MORE NUANCED
+        age = df.loc[i, 'age']
+        if age < 1:  # Puppy/kitten
+            if exp >= 1:
+                score += 5
+            else:
+                score -= 15  # Hard for beginners
+        elif age > 7:  # Senior
+            score += 10  # Generally easier
+        elif age > 3:  # Adult
             score += 5
         
-        # Normalize to 0-100 with some randomness
-        score = np.clip(score + np.random.normal(0, 5), 0, 100)
-        compatibility[i] = score
+        # Species-specific adjustments
+        if species == 0:  # Cats
+            score += 8  # Generally independent
+        elif species == 1:  # Dogs
+            if exp == 0:
+                score -= 5  # Need more attention
+        
+        # Add controlled randomness for variation
+        score = score + np.random.normal(0, 8)
+        
+        # Normalize to 0-100
+        compatibility[i] = np.clip(score, 0, 100)
     
     df['compatibility_score'] = compatibility
     
