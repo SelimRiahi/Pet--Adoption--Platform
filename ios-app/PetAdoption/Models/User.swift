@@ -8,6 +8,7 @@ struct User: Codable, Identifiable {
     let housingType: String?
     let hasYard: Bool?
     let hasOtherPets: Bool?
+    let hasChildren: Bool?
     let experienceLevel: String?
     let activityLevel: String?
     let workSchedule: String?
@@ -19,7 +20,7 @@ struct User: Codable, Identifiable {
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case email, name, role, housingType, hasYard, hasOtherPets
+        case email, name, role, housingType, hasYard, hasOtherPets, hasChildren
         case experienceLevel, activityLevel, workSchedule, hasFencedYard
         case livingSituation, householdSize, timeAvailable, budgetLevel
     }

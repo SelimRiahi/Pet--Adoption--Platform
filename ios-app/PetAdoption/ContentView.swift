@@ -6,11 +6,11 @@ struct ContentView: View {
     var body: some View {
         if authViewModel.isAuthenticated {
             if authViewModel.currentUser?.role == "shelter" {
-                // Shelter view (simplified for now)
-                HomeView()
+                // Shelter view - single dashboard
+                ShelterDashboardView()
                     .environmentObject(authViewModel)
             } else {
-                // User view with tabs
+                // User view - tabs with all features
                 TabView {
                     HomeView()
                         .environmentObject(authViewModel)
@@ -18,9 +18,20 @@ struct ContentView: View {
                             Label("Browse", systemImage: "pawprint.fill")
                         }
                     
+                    RecommendationsView()
+                        .tabItem {
+                            Label("For You", systemImage: "heart.fill")
+                        }
+                    
                     AdoptionRequestsView()
                         .tabItem {
-                            Label("My Requests", systemImage: "heart.fill")
+                            Label("Requests", systemImage: "doc.text.fill")
+                        }
+                    
+                    ProfileView()
+                        .environmentObject(authViewModel)
+                        .tabItem {
+                            Label("Profile", systemImage: "person.fill")
                         }
                 }
             }
