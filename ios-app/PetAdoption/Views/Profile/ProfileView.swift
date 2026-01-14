@@ -51,11 +51,10 @@ struct ProfileView: View {
                                 
                                 VStack(spacing: 12) {
                                     InfoRow(label: "Housing Type", value: user.housingType?.capitalized ?? "Not set")
-                                    InfoRow(label: "Has Yard", value: user.hasYard == true ? "Yes" : "No")
-                                    InfoRow(label: "Experience Level", value: user.experienceLevel?.capitalized ?? "Not set")
-                                    InfoRow(label: "Time Available", value: user.timeAvailable?.capitalized ?? "Not set")
-                                    InfoRow(label: "Has Children", value: user.hasChildren == true ? "Yes" : "No")
-                                    InfoRow(label: "Has Other Pets", value: user.hasOtherPets == true ? "Yes" : "No")
+                                    InfoRow(label: "Experience", value: user.experience?.capitalized ?? "None")
+                                    InfoRow(label: "Available Time", value: "\(Int(user.availableTime ?? 5)) hours/day")
+                                    InfoRow(label: "Has Children", value: user.hasChildren ? "Yes" : "No")
+                                    InfoRow(label: "Has Other Pets", value: user.hasOtherPets ? "Yes" : "No")
                                 }
                                 .padding()
                                 .background(Color(.systemGray6))

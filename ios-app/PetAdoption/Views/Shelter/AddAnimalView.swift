@@ -8,12 +8,11 @@ struct AddAnimalView: View {
     @State private var species = "dog"
     @State private var breed = ""
     @State private var age = ""
-    @State private var gender = "male"
     @State private var size = "medium"
     @State private var description = ""
-    @State private var energyLevel = "medium"
-    @State private var goodWithKids = false
-    @State private var goodWithPets = false
+    @State private var energyLevel = 5
+    @State private var goodWithChildren = true
+    @State private var goodWithPets = true
     @State private var isSubmitting = false
     @State private var showError = false
     @State private var errorMessage = ""
@@ -27,17 +26,15 @@ struct AddAnimalView: View {
                     Picker("Species", selection: $species) {
                         Text("Dog").tag("dog")
                         Text("Cat").tag("cat")
+                        Text("Bird").tag("bird")
+                        Text("Rabbit").tag("rabbit")
+                        Text("Other").tag("other")
                     }
                     
                     TextField("Breed", text: $breed)
                     
                     TextField("Age (years)", text: $age)
                         .keyboardType(.numberPad)
-                    
-                    Picker("Gender", selection: $gender) {
-                        Text("Male").tag("male")
-                        Text("Female").tag("female")
-                    }
                     
                     Picker("Size", selection: $size) {
                         Text("Small").tag("small")
@@ -47,13 +44,9 @@ struct AddAnimalView: View {
                 }
                 
                 Section("Characteristics") {
-                    Picker("Energy Level", selection: $energyLevel) {
-                        Text("Low").tag("low")
-                        Text("Medium").tag("medium")
-                        Text("High").tag("high")
-                    }
+                    Stepper("Energy Level: \(energyLevel)", value: $energyLevel, in: 0...10)
                     
-                    Toggle("Good with Children", isOn: $goodWithKids)
+                    Toggle("Good with Children", isOn: $goodWithChildren)
                     Toggle("Good with Other Pets", isOn: $goodWithPets)
                 }
                 
@@ -109,15 +102,12 @@ struct AddAnimalView: View {
             imageUrl: nil,
             energyLevel: energyLevel,
             goodWithKids: goodWithKids,
+            size: size,
+            energyLevel: energyLevel,
+            goodWithChildren: goodWithChildren,
             goodWithPets: goodWithPets,
-            specialNeeds: nil,
-            spaceRequirement: nil
-        )
-        
-        Task {
-            do {
-                _ = try await APIService.shared.createAnimal(animal)
-                isSubmitting = false
+            description: description,
+            imageUrl = false
                 onSuccess()
                 dismiss()
             } catch {

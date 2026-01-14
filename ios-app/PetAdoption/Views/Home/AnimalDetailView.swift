@@ -65,19 +65,9 @@ struct AnimalDetailView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     DetailRow(label: "Age", value: "\(animal.age) years")
                     DetailRow(label: "Size", value: animal.size.capitalized)
-                    DetailRow(label: "Gender", value: animal.gender.capitalized)
-                    
-                    if let energyLevel = animal.energyLevel {
-                        DetailRow(label: "Energy Level", value: energyLevel.capitalized)
-                    }
-                    
-                    if let goodWithKids = animal.goodWithKids {
-                        DetailRow(label: "Good with Children", value: goodWithKids ? "Yes ✓" : "No")
-                    }
-                    
-                    if let goodWithPets = animal.goodWithPets {
-                        DetailRow(label: "Good with Pets", value: goodWithPets ? "Yes ✓" : "No")
-                    }
+                    DetailRow(label: "Energy Level", value: "\(animal.energyLevel)/10")
+                    DetailRow(label: "Good with Children", value: animal.goodWithChildren ? "Yes ✓" : "No")
+                    DetailRow(label: "Good with Pets", value: animal.goodWithPets ? "Yes ✓" : "No")
                 }
                 .padding()
                 .background(Color(.systemGray6))
@@ -225,17 +215,14 @@ struct DetailRow: View {
             species: "dog",
             breed: "Golden Retriever",
             age: 3,
-            gender: "male",
             size: "large",
             description: "Friendly and energetic dog",
             imageUrl: nil,
             shelterId: "1",
             status: "available",
-            energyLevel: "high",
-            goodWithKids: true,
+            energyLevel: 8,
+            goodWithChildren: true,
             goodWithPets: true,
-            specialNeeds: false,
-            spaceRequirement: "large",
             compatibilityScore: nil
         ))
     }

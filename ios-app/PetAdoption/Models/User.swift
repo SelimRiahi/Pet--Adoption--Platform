@@ -6,23 +6,17 @@ struct User: Codable, Identifiable {
     let name: String
     let role: String
     let housingType: String?
-    let hasYard: Bool?
-    let hasOtherPets: Bool?
-    let hasChildren: Bool?
-    let experienceLevel: String?
-    let activityLevel: String?
-    let workSchedule: String?
-    let hasFencedYard: Bool?
-    let livingSituation: String?
-    let householdSize: Int?
-    let timeAvailable: String?
-    let budgetLevel: String?
+    let availableTime: Double?
+    let experience: String?
+    let hasChildren: Bool
+    let hasOtherPets: Bool
+    let phoneNumber: String?
+    let address: String?
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case email, name, role, housingType, hasYard, hasOtherPets, hasChildren
-        case experienceLevel, activityLevel, workSchedule, hasFencedYard
-        case livingSituation, householdSize, timeAvailable, budgetLevel
+        case email, name, role, housingType, availableTime, experience
+        case hasChildren, hasOtherPets, phoneNumber, address
     }
 }
 
@@ -46,7 +40,9 @@ struct AuthResponse: Codable {
 struct UpdateProfileRequest: Codable {
     let name: String?
     let housingType: String?
-    let hasYard: Bool?
+    let availableTime: Double?
+    let experience: String?
+    let hasChildren: Bool?
     let hasOtherPets: Bool?
     let experienceLevel: String?
     let activityLevel: String?

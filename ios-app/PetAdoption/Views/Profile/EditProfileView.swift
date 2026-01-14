@@ -6,9 +6,8 @@ struct EditProfileView: View {
     let onSave: (User) -> Void
     
     @State private var housingType: String
-    @State private var hasYard: Bool
-    @State private var experienceLevel: String
-    @State private var timeAvailable: String
+    @State private var availableTime: Double
+    @State private var experience: String
     @State private var hasChildren: Bool
     @State private var hasOtherPets: Bool
     @State private var isSaving = false
@@ -19,11 +18,10 @@ struct EditProfileView: View {
         self.user = user
         self.onSave = onSave
         _housingType = State(initialValue: user.housingType ?? "apartment")
-        _hasYard = State(initialValue: user.hasYard ?? false)
-        _experienceLevel = State(initialValue: user.experienceLevel ?? "beginner")
-        _timeAvailable = State(initialValue: user.timeAvailable ?? "low")
-        _hasChildren = State(initialValue: user.hasChildren ?? false)
-        _hasOtherPets = State(initialValue: user.hasOtherPets ?? false)
+        _availableTime = State(initialValue: user.availableTime ?? 5.0)
+        _experience = State(initialValue: user.experience ?? "none")
+        _hasChildren = State(initialValue: user.hasChildren)
+        _hasOtherPets = State(initialValue: user.hasOtherPets)
     }
     
     var body: some View {
@@ -32,26 +30,21 @@ struct EditProfileView: View {
                 Section("Housing") {
                     Picker("Housing Type", selection: $housingType) {
                         Text("Apartment").tag("apartment")
-                        Text("House").tag("house")
+                        Text("Small House").tag("house_small")
+                        Text("Large House").tag("house_large")
                     }
-                    
-                    Toggle("Has Yard", isOn: $hasYard)
                 }
                 
                 Section("Experience") {
-                    Picker("Experience Level", selection: $experienceLevel) {
-                        Text("Beginner").tag("beginner")
-                        Text("Intermediate").tag("intermediate")
-                        Text("Advanced").tag("advanced")
+                    Picker("Experience Level", selection: $experience) {
+                        Text("None").tag("none")
+                        Text("Some").tag("some")
+                        Text("Expert").tag("expert")
                     }
                 }
                 
                 Section("Availability") {
-                    Picker("Time Available", selection: $timeAvailable) {
-                        Text("Low").tag("low")
-                        Text("Medium").tag("medium")
-                        Text("High").tag("high")
-                    }
+                    Stepper("Available Time: \(Int(availableTime)) hours", value: $availableTime, in: 0...10, step: 1)
                 }
                 
                 Section("Family") {
@@ -86,9 +79,8 @@ struct EditProfileView: View {
         isSaving = true
         let updates = UpdateProfileRequest(
             housingType: housingType,
-            hasYard: hasYard,
-            experienceLevel: experienceLevel,
-            timeAvailable: timeAvailable,
+            availableTime: availableTime,
+            experience: experience,
             hasChildren: hasChildren,
             hasOtherPets: hasOtherPets
         )
@@ -109,10 +101,9 @@ struct EditProfileView: View {
 }
 
 struct UpdateProfileRequest: Codable {
-    let housingType: String
-    let hasYard: Bool
-    let experienceLevel: String
-    let timeAvailable: String
-    let hasChildren: Bool
-    let hasOtherPets: Bool
+    let housingType: String?
+    let availableTime: Double?
+    let experience: String?
+    let hasChildren: Bool?
+    let hasOtherPets: Bool?
 }

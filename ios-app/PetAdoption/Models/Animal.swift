@@ -6,24 +6,21 @@ struct Animal: Codable, Identifiable {
     let species: String
     let breed: String
     let age: Int
-    let gender: String
     let size: String
     let description: String
     let imageUrl: String?
     let shelterId: String
     let status: String
-    let energyLevel: String?
-    let goodWithKids: Bool?
-    let goodWithPets: Bool?
-    let specialNeeds: Bool?
-    let spaceRequirement: String?
+    let energyLevel: Int
+    let goodWithChildren: Bool
+    let goodWithPets: Bool
     let compatibilityScore: Double?
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, species, breed, age, gender, size, description
-        case imageUrl, shelterId, status, energyLevel, goodWithKids
-        case goodWithPets, specialNeeds, spaceRequirement, compatibilityScore
+        case name, species, breed, age, size, description
+        case imageUrl, shelterId, status, energyLevel
+        case goodWithChildren, goodWithPets, compatibilityScore
     }
 }
 
@@ -32,13 +29,10 @@ struct CreateAnimalRequest: Codable {
     let species: String
     let breed: String
     let age: Int
-    let gender: String
     let size: String
+    let energyLevel: Int
+    let goodWithChildren: Bool
+    let goodWithPets: Bool
     let description: String
     let imageUrl: String?
-    let energyLevel: String?
-    let goodWithKids: Bool?
-    let goodWithPets: Bool?
-    let specialNeeds: Bool?
-    let spaceRequirement: String?
 }

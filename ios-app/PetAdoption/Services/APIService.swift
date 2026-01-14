@@ -131,7 +131,7 @@ class APIService {
     }
     
     func getRecommendations() async throws -> [Animal] {
-        guard let request = createRequest(endpoint: "/animals/recommendations", method: "GET") else {
+        guard let request = createRequest(endpoint: "/animals/recommendations", method: "POST") else {
             throw URLError(.badURL)
         }
         
